@@ -94,19 +94,31 @@ const AvgPrice = async ()=>{
     }
 }
 
-const RevenueByMonth =  (req)=>{
+const RevenueByMonth =async  (req)=>{
     try {
-        const { monthYear  } = req.params; // Assuming the date is passed as a URL parameter in the format 'YYYY-MM-DD'
-        const [year, month, day] = monthYear.split('-');
-        // Create a Date object using year, month, and day parts
-        // const startDate = new Date(Number(year), Number(month) - 1, Number(day));
-        // const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // Calculate the end date of the month
-
-        // Create a Date object for the given month
-        const startDate = new Date(Number(year), Number(month) - 1, 1); // Start date of the month
-        const endDate = new Date(Number(year), Number(month), 0); // End date of the month (last day of the month)
-
+        const givenDate = req.params.date; // Assuming the date is passed as a URL parameter in the format 'YYYY-MM-DD'
+        const year = parseInt(givenDate.split('-')[0]); // Extract year from the given date
+        const month = parseInt(givenDate.split('-')[1]); // Extract month from the given date
+        const startDate = new Date(year, month - 1, 1); // month is 0-indexed in JavaScript Date
+        const endDate = new Date(year, month, 0); // The last day of the month
         console.log(startDate, endDate);
+
+        const data = await SalesModel.aggregate([
+            {
+                $match:{
+                    createdAt: { $gte: startDate, $lt: endDate }
+                }
+            },
+            {
+                $group:{
+                    _id:null,
+                    totalRevenue :{$sum :{$multiply :[{$toDouble:"$quantity"},{$toDouble:"$price"}] } }
+                }
+            }
+        ])
+
+        console.log(data);
+        return {status:"success", data:data}
     }catch (e) {
         return{status:"fail", data: e.message}
     }
