@@ -19,7 +19,7 @@ exports.AVGPrice = async (req,res)=>{
     res.status(200).json(result);
 }
 
-exports.RevenueByMonth =  (req,res)=>{
-    let result =  RevenueByMonth(req);
+exports.RevenueByMonth = async (req,res)=>{
+    let result =  await RevenueByMonth(req);
     res.status(200).json(result);
 }

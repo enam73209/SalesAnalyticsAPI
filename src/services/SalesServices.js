@@ -116,10 +116,8 @@ const RevenueByMonth =async  (req)=>{
                     totalRevenue :{$sum :{$multiply :[{$toDouble:"$quantity"},{$toDouble:"$price"}] } }
                 }
             }
-        ])
-
-        console.log(data);
-        return {status:"success", data:data}
+        ]).exec();
+        return {status:"success", data:data[0]['totalRevenue']}
     }catch (e) {
         return{status:"fail", data: e.message}
     }
