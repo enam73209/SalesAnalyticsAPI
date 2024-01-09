@@ -99,8 +99,9 @@ const RevenueByMonth =async  (req)=>{
         const givenDate = req.params.date; // Assuming the date is passed as a URL parameter in the format 'YYYY-MM-DD'
         const year = parseInt(givenDate.split('-')[0]); // Extract year from the given date
         const month = parseInt(givenDate.split('-')[1]); // Extract month from the given date
-        const startDate = new Date(year, month - 1, 1); // month is 0-indexed in JavaScript Date
-        const endDate = new Date(year, month, 0); // The last day of the month
+        const startDate = new Date(year, month - 1, 1, 0, 0, 0); // Start of the day
+        const endDate = new Date(year, month, 0, 23, 59, 59); // End of the day
+
         console.log(startDate, endDate);
 
         const data = await SalesModel.aggregate([
